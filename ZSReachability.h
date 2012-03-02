@@ -49,6 +49,9 @@
 #import <Foundation/Foundation.h>
 #import <SystemConfiguration/SystemConfiguration.h>
 
+//Need this to remove warning about sockaddr_in in declaration below
+#import <netinet/in.h>
+
 typedef enum {
 	NotReachable = 0,
 	ReachableViaWiFi,
