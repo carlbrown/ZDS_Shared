@@ -31,6 +31,10 @@
  *
  */
 
+#ifndef ISRETINADISPLAY
+#import "ZSConstants.h"
+#endif
+
 #import "ZSURLConnectionDelegate.h"
 
 #import <ImageIO/ImageIO.h>

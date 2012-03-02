@@ -30,6 +30,10 @@
  *
  */
 
+#ifndef ISRETINADISPLAY
+#import "ZSConstants.h"
+#endif
+
 #import "NSString+ZSAdditions.h"
 #import "NSData+ZSAdditions.h"
 

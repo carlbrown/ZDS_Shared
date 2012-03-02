@@ -30,6 +30,10 @@
  *
  */
 
+#ifndef ISRETINADISPLAY
+#import "ZSConstants.h"
+#endif
+
 #import "NSData+ZSAdditions.h"
 #import <CommonCrypto/CommonDigest.h>
 

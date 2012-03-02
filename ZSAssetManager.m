@@ -31,6 +31,10 @@
  *
  */
 
+#ifndef ISRETINADISPLAY
+#import "ZSConstants.h"
+#endif
+
 #import "ZSAssetManager.h"
 #import "ZSURLConnectionDelegate.h"
 #import "ZSReachability.h"

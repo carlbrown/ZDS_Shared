@@ -45,6 +45,11 @@
  
  */
 
+#ifndef ISRETINADISPLAY
+#import "ZSConstants.h"
+#endif
+
+
 #import <sys/socket.h>
 #import <netinet/in.h>
 #import <netinet6/in6.h>
