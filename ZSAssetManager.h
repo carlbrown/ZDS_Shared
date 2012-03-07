@@ -40,6 +40,7 @@
 @property (nonatomic, assign, getter=allowBackgroundCaching) BOOL backgroundCaching;
 
 - (UIImage*)imageForURL:(NSURL*)url;
+- (NSData*)dataForURL:(NSURL*)url;
 - (NSURL*)localURLForAssetURL:(NSURL*)url;
 
 - (void)queueAssetsForRetrievalFromURLSet:(NSSet*)urlSet;

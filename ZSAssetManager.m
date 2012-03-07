@@ -487,6 +487,16 @@ typedef enum {
   return image;
 }
 
+- (NSData*)dataForURL:(NSURL*)url
+{
+    ZAssert(url, @"nil URL passed again");
+    
+    NSURL *localURL = [self localURLForAssetURL:url];
+    if (!localURL) return nil;
+        
+    return [NSData dataWithContentsOfMappedFile:[localURL path]];
+}
+
 - (void)flushCache
 {
   [[self assetQueue] setSuspended:YES];
