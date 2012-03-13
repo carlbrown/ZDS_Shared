@@ -45,6 +45,7 @@
 
 #define VERBOSE NO
 #define CACHE_TEST NO
+//#define NOTIFY_ON_CACHE_OPS YES
 
 #define kGoodSampleThreshold (25 * 1024)
 
@@ -298,6 +299,16 @@ typedef enum {
   NSError *error = nil;
   
   [self calculateBandwidthForDelegate:delegate];
+    
+#ifdef NOTIFY_ON_CACHE_OPS
+    NSNotification *notification = [NSNotification notificationWithName:kImageDownloadComplete object:[delegate myURL] userInfo:nil];
+    
+    [[NSNotificationQueue defaultQueue] enqueueNotification:notification postingStyle:NSPostWhenIdle coalesceMask:NSNotificationCoalescingOnSender forModes:nil];
+    
+    DLog(@"Posting notification for URL:%@",[delegate myURL]);
+
+    [[NSNotificationCenter defaultCenter] postNotification:notification];
+#endif //NOTIFY_ON_CACHE_OPS
   
   if (opCount > 1) return;
   
@@ -384,6 +395,8 @@ typedef enum {
   NSNotification *notification = [NSNotification notificationWithName:kImageDownloadComplete object:[delegate myURL] userInfo:nil];
   
   [[NSNotificationQueue defaultQueue] enqueueNotification:notification postingStyle:NSPostWhenIdle coalesceMask:NSNotificationCoalescingOnSender forModes:nil];
+
+    DLog(@"Posting notification for URL:%@",[delegate myURL]);
 
   [[NSNotificationCenter defaultCenter] postNotification:notification];
 }
