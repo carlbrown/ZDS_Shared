@@ -39,6 +39,7 @@
 
 #import <ImageIO/ImageIO.h>
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <QuartzCore/QuartzCore.h>
 
 static NSInteger activityCount;
 
@@ -150,7 +151,7 @@ static dispatch_queue_t pngQueue;
     return;
   }
   
-  [self setDuration:([NSDate timeIntervalSinceReferenceDate] - [self startTime])];
+  [self setDuration:(CACurrentMediaTime() - [self startTime])];
    
   if (![self filePath]) {
     if ([[self delegate] respondsToSelector:[self successSelector]]) {
@@ -188,7 +189,7 @@ static dispatch_queue_t pngQueue;
   [self setResponse:resp];
   MCRelease(data);
   data = [[NSMutableData alloc] init];
-  [self setStartTime:[NSDate timeIntervalSinceReferenceDate]];
+  [self setStartTime:CACurrentMediaTime()];
 }
 
 - (void)connection:(NSURLConnection*)connection didReceiveData:(NSData*)newData
