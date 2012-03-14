@@ -36,6 +36,7 @@
 #endif
 
 #import "ZSURLConnectionDelegate.h"
+#import "ZSBackoffHandler.h"
 
 #import <ImageIO/ImageIO.h>
 #import <MobileCoreServices/MobileCoreServices.h>
@@ -86,6 +87,8 @@ void decrementNetworkActivity(id sender)
 @synthesize startTime;
 @synthesize duration;
 
+@synthesize backoffHandler;
+
 static dispatch_queue_t writeQueue;
 static dispatch_queue_t pngQueue;
 
@@ -127,9 +130,25 @@ static dispatch_queue_t pngQueue;
 {
   if ([self isCancelled]) return;
   
-  incrementNetworkActivity(self);
-  NSURLRequest *request = [NSURLRequest requestWithURL:[self myURL]];
+  if ([self backoffHandler]) {
+    CGFloat currentDelay = [[self backoffHandler] currentStartDelay];
+    if (currentDelay >0.0f) {
+      //We're currently being throttled, so wait for the 
+      // designated amount of time before we start
+      [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:currentDelay]];
+      
+      if ([self isCancelled]) return;
+    }
+  }
   
+  incrementNetworkActivity(self);
+  NSURLRequest *request; 
+  
+  if ([self backoffHandler]) {
+    request = [NSURLRequest requestWithURL:[self myURL] cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:[[self backoffHandler] currentTimeout]];
+  } else {
+    request = [NSURLRequest requestWithURL:[self myURL]];
+  }
   [self setConnection:[NSURLConnection connectionWithRequest:request delegate:self]];
   
   CFRunLoopRun();

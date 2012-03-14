@@ -32,6 +32,7 @@
  */
 
 @class ZSURLConnectionDelegate;
+@class ZSBackoffHandler;
 
 void incrementNetworkActivity(id sender);
 void decrementNetworkActivity(id sender);
@@ -48,6 +49,7 @@ void decrementNetworkActivity(id sender);
 @property (nonatomic, retain) NSURL *myURL;
 @property (nonatomic, retain) NSHTTPURLResponse *response;
 @property (nonatomic, retain) id delegate;
+@property (nonatomic, assign) ZSBackoffHandler *backoffHandler;
 
 @property (nonatomic, assign) SEL successSelector;
 @property (nonatomic, assign) SEL failureSelector;

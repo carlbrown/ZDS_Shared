@@ -39,6 +39,8 @@
 #import "ZSURLConnectionDelegate.h"
 #import "ZSReachability.h"
 
+#import "ZSBackoffHandler.h"
+
 #import "NSString+ZSAdditions.h"
 
 #define kCachePath @"imageCache"
@@ -65,6 +67,7 @@ typedef enum {
 - (void)downloadImage:(NSURL*)url;
 - (NSURL*)resolveLocalURLForRemoteURL:(NSURL*)url;
 - (NSOperationQueue*)assetQueue;
+- (ZSBackoffHandler *)backoffHandler;
 
 @property (nonatomic, assign) NSUInteger totalDownload;
 @property (nonatomic, assign) NSInteger cachePopulationIdentifier;
@@ -117,6 +120,17 @@ typedef enum {
   }
   
   return assetQueue;
+}
+
+- (ZSBackoffHandler *)backoffHandler {
+  static ZSBackoffHandler *backoffHandler;
+  if (backoffHandler) return backoffHandler;
+  
+  @synchronized([UIApplication sharedApplication]) {
+    backoffHandler = [[ZSBackoffHandler alloc] init];
+  }
+  
+  return backoffHandler;
 }
 
 - (NSString*)cachePath
@@ -256,6 +270,8 @@ typedef enum {
   CGFloat sample = ([[delegate data] length] / [delegate duration]);
   totalDownload += [[delegate data] length];
   ++numberOfItemsDownloaded;
+  [[self backoffHandler] setCurrentBandwith:sample];
+  
   
   if (sample >= kYellowHighThreshold) {
     currentNetworkState = ++currentNetworkState < ZSNetworkStateOptimal ? currentNetworkState : ZSNetworkStateOptimal;
@@ -289,7 +305,10 @@ typedef enum {
       DLog(@"still busy with user requests");
       return;
     }
-    [[self assetQueue] setSuspended:YES];
+    //if we have a backoff manager, let it delay instead of suspending here
+    if (![self backoffHandler]) {
+      [[self assetQueue] setSuspended:YES];
+    }
   }
 }
 
@@ -299,15 +318,15 @@ typedef enum {
   NSError *error = nil;
   
   [self calculateBandwidthForDelegate:delegate];
-    
+  
 #ifdef NOTIFY_ON_CACHE_OPS
-    NSNotification *notification = [NSNotification notificationWithName:kImageDownloadComplete object:[delegate myURL] userInfo:nil];
-    
-    [[NSNotificationQueue defaultQueue] enqueueNotification:notification postingStyle:NSPostWhenIdle coalesceMask:NSNotificationCoalescingOnSender forModes:nil];
-    
-    DLog(@"Posting notification for URL:%@",[delegate myURL]);
-
-    [[NSNotificationCenter defaultCenter] postNotification:notification];
+  NSNotification *notification = [NSNotification notificationWithName:kImageDownloadComplete object:[delegate myURL] userInfo:nil];
+  
+  [[NSNotificationQueue defaultQueue] enqueueNotification:notification postingStyle:NSPostWhenIdle coalesceMask:NSNotificationCoalescingOnSender forModes:nil];
+  
+  if (VERBOSE) DLog(@"Posting notification for URL:%@",[delegate myURL]);
+  
+  [[NSNotificationCenter defaultCenter] postNotification:notification];
 #endif //NOTIFY_ON_CACHE_OPS
   
   if (opCount > 1) return;
@@ -325,6 +344,7 @@ typedef enum {
 - (void)cacheOperationFailed:(ZSURLConnectionDelegate*)delegate
 {
   if (VERBOSE) DLog(@"%@:%s request failed", [self class], _cmd);
+  [[self backoffHandler] incrementFailedCount];
 }
 
 #pragma mark -
@@ -343,6 +363,7 @@ typedef enum {
   NetworkStatus status = [[ZSReachability reachabilityForInternetConnection] currentReachabilityStatus];
   [[self assetQueue] setSuspended:(status == NotReachable)];
   if (CACHE_TEST) DLog(@"Suspended: %@", (status == NotReachable ? @"YES" : @"NO"));
+  [[self backoffHandler] resetBackoffState];
 }
 
 #pragma mark -
@@ -376,6 +397,10 @@ typedef enum {
   [delegate setSuccessSelector:@selector(dataReceived:)];
   [delegate setFailureSelector:@selector(requestFailedForDelegate:)];
   [delegate setQueuePriority:NSOperationQueuePriorityNormal];
+  if ([self backoffHandler]) {
+    [delegate setBackoffHandler:[self backoffHandler]];
+  }
+  
   
   [[self assetQueue] addOperation:delegate];
   
@@ -395,16 +420,26 @@ typedef enum {
   NSNotification *notification = [NSNotification notificationWithName:kImageDownloadComplete object:[delegate myURL] userInfo:nil];
   
   [[NSNotificationQueue defaultQueue] enqueueNotification:notification postingStyle:NSPostWhenIdle coalesceMask:NSNotificationCoalescingOnSender forModes:nil];
-
-    DLog(@"Posting notification for URL:%@",[delegate myURL]);
-
+  
+  if (VERBOSE) DLog(@"Posting notification for URL:%@",[delegate myURL]);
+  
   [[NSNotificationCenter defaultCenter] postNotification:notification];
+  
+  //if we have a backoff handler, let it know what our current bandwidth is
+  if ([self backoffHandler]) {
+    [self calculateBandwidthForDelegate: delegate];
+  }
 }
 
 - (void)requestFailedForDelegate:(ZSURLConnectionDelegate*)delegate
 {
   if (VERBOSE) DLog(@"%@:%s request failed", [self class], _cmd);
   if (!delegate) return;
+  [[self backoffHandler] incrementFailedCount];
+  
+  //Requeue this to try again
+#warning TODO: we should only retry this a certain number of times and for certain failures
+  [self queueAssetForRetrievalFromURL:[delegate myURL]];
 }
 
 #pragma mark -
@@ -434,6 +469,9 @@ typedef enum {
   [cacheOperation setFailureSelector:@selector(cacheOperationFailed:)];
   [cacheOperation setQueuePriority:NSOperationQueuePriorityLow];
   [cacheOperation setThreadPriority:0.0f];
+  if ([self backoffHandler]) {
+    [cacheOperation setBackoffHandler:[self backoffHandler]];
+  }
   
   [[self assetQueue] addOperation:cacheOperation];
   MCRelease(cacheOperation);
