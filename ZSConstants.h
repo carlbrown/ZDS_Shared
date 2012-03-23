@@ -5,9 +5,15 @@
 
 #ifdef DEBUG
   #define MCRelease(x) [x release]
+#ifndef DLog
   #define DLog(...) NSLog(@"%s(%p) %@", __PRETTY_FUNCTION__, self, [NSString stringWithFormat:__VA_ARGS__])
+#endif
+#ifndef DCLog
   #define DCLog(...) NSLog(@"%@", [NSString stringWithFormat:__VA_ARGS__])
+#endif
+#ifndef ALog
   #define ALog(...) {NSLog(@"%s(%p) %@", __PRETTY_FUNCTION__, self, [NSString stringWithFormat:__VA_ARGS__]);[[NSAssertionHandler currentHandler] handleFailureInFunction:[NSString stringWithCString:__PRETTY_FUNCTION__ encoding:NSUTF8StringEncoding] file:[NSString stringWithCString:__FILE__ encoding:NSUTF8StringEncoding] lineNumber:__LINE__ description:__VA_ARGS__];}
+#endif
 #else
   #define MCRelease(x) [x release], x = nil
   #define DLog(...) do { } while (0)
