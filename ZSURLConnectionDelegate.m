@@ -87,6 +87,8 @@ void decrementNetworkActivity(id sender)
 @synthesize startTime;
 @synthesize duration;
 
+@synthesize retryCount;
+
 @synthesize backoffHandler;
 
 static dispatch_queue_t writeQueue;

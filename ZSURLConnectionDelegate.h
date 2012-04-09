@@ -58,6 +58,8 @@ void decrementNetworkActivity(id sender);
 @property (nonatomic, assign) NSTimeInterval startTime;
 @property (nonatomic, assign) NSTimeInterval duration;
 
+@property (nonatomic, assign) uint retryCount;
+
 - (id)initWithURL:(NSURL*)aURL delegate:(id)delegate;
 
 @end

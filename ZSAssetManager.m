@@ -55,6 +55,8 @@
 #define kYellowHighThreshold (50.0f * 1024.0f)
 #define kYellowLowThreshold (25.0f * 1024.0f)
 
+static uint maxRetryCount = 5; //Set to zero if you don't want retrying
+
 typedef enum {
   ZSNetworkStateOptimal = 4,
   ZSNetworkStateAverage = 0,
@@ -437,9 +439,18 @@ typedef enum {
   if (!delegate) return;
   [[self backoffHandler] incrementFailedCount];
   
-  //Requeue this to try again
-#warning TODO: we should only retry this a certain number of times and for certain failures
-  [self queueAssetForRetrievalFromURL:[delegate myURL]];
+  if ((maxRetryCount > 0) && ([delegate retryCount] < maxRetryCount)) {
+    NSUInteger oldRetryCount=[delegate retryCount];
+    NSURL *oldURL = [delegate myURL];
+    //Requeue this to try again
+    [self queueAssetForRetrievalFromURL:oldURL];
+    for (ZSURLConnectionDelegate *aDelegate in [[self assetQueue] operations]) {
+      if ([[aDelegate myURL] isEqual:oldURL]) {
+        [aDelegate setRetryCount:(oldRetryCount + 1)];
+      }
+    }
+
+  }
 }
 
 #pragma mark -
