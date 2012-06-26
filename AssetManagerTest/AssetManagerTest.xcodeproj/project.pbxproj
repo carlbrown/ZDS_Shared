@@ -21,6 +21,8 @@
 		B678976F1332B20C0022CA67 /* NSData+ZSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B678976C1332B20B0022CA67 /* NSData+ZSAdditions.m */; };
 		B67897701332B20C0022CA67 /* NSString+ZSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = B678976E1332B20B0022CA67 /* NSString+ZSAdditions.m */; };
 		B67897721332B2990022CA67 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B67897711332B2990022CA67 /* Security.framework */; };
+		D308441A159A5C4800BA81AD /* ZSBackoffHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = D3084419159A5C4800BA81AD /* ZSBackoffHandler.m */; };
+		D308441D159A5C6700BA81AD /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D308441C159A5C6700BA81AD /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +51,9 @@
 		B678976D1332B20B0022CA67 /* NSString+ZSAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+ZSAdditions.h"; path = "../NSString+ZSAdditions.h"; sourceTree = "<group>"; };
 		B678976E1332B20B0022CA67 /* NSString+ZSAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+ZSAdditions.m"; path = "../NSString+ZSAdditions.m"; sourceTree = "<group>"; };
 		B67897711332B2990022CA67 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		D3084418159A5C4800BA81AD /* ZSBackoffHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZSBackoffHandler.h; path = ../ZSBackoffHandler.h; sourceTree = "<group>"; };
+		D3084419159A5C4800BA81AD /* ZSBackoffHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZSBackoffHandler.m; path = ../ZSBackoffHandler.m; sourceTree = "<group>"; };
+		D308441C159A5C6700BA81AD /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +61,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D308441D159A5C6700BA81AD /* QuartzCore.framework in Frameworks */,
 				B67897721332B2990022CA67 /* Security.framework in Frameworks */,
 				B678976A133298440022CA67 /* SystemConfiguration.framework in Frameworks */,
 				B678970413328E390022CA67 /* UIKit.framework in Frameworks */,
@@ -88,6 +94,7 @@
 		B678970213328E390022CA67 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D308441C159A5C6700BA81AD /* QuartzCore.framework */,
 				B67897711332B2990022CA67 /* Security.framework */,
 				B6789769133298440022CA67 /* SystemConfiguration.framework */,
 				B678970313328E390022CA67 /* UIKit.framework */,
@@ -124,6 +131,8 @@
 		B67897731332B2A60022CA67 /* AssetManager */ = {
 			isa = PBXGroup;
 			children = (
+				D3084418159A5C4800BA81AD /* ZSBackoffHandler.h */,
+				D3084419159A5C4800BA81AD /* ZSBackoffHandler.m */,
 				B678976B1332B20B0022CA67 /* NSData+ZSAdditions.h */,
 				B678976C1332B20B0022CA67 /* NSData+ZSAdditions.m */,
 				B678976D1332B20B0022CA67 /* NSString+ZSAdditions.h */,
@@ -207,6 +216,7 @@
 				B678976F1332B20C0022CA67 /* NSData+ZSAdditions.m in Sources */,
 				B67897701332B20C0022CA67 /* NSString+ZSAdditions.m in Sources */,
 				B66417B71342A557001EC65F /* GDataXMLNode.m in Sources */,
+				D308441A159A5C4800BA81AD /* ZSBackoffHandler.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
