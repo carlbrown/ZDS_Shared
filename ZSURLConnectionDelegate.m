@@ -42,6 +42,8 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #import <QuartzCore/QuartzCore.h>
 
+#import "ZSContentModificationVerifier.h"
+
 static NSInteger activityCount;
 
 void incrementNetworkActivity(id sender)
@@ -143,6 +145,14 @@ static dispatch_queue_t pngQueue;
     }
   }
   
+  //Check to see if we need to do this
+  ZSContentModificationVerifier *verifier = [[ZSContentModificationVerifier alloc] init];
+  BOOL downloadNeeded = [verifier hasContentChangedForURL:[self myURL] forFilePath:[self filePath]];
+  if (!downloadNeeded) {
+    //Content is verified to be the same as what we already have
+    return;
+  }
+  
   incrementNetworkActivity(self);
   NSURLRequest *request; 
   
@@ -154,6 +164,8 @@ static dispatch_queue_t pngQueue;
   [self setConnection:[NSURLConnection connectionWithRequest:request delegate:self]];
   
   CFRunLoopRun();
+  
+  [verifier saveModificationDetailsForResponse:[self response] forFilePath:[self filePath]];
   
   decrementNetworkActivity(self);
 }
