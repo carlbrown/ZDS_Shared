@@ -32,6 +32,8 @@
  */
 
 #define kImageDownloadComplete @"kImageDownloadComplete"
+#define kImageDownloadBegan @"kImageDownloadBegan"
+#define kImageDownloadProgress @"kImageDownloadProgress"
 
 @class ZSURLConnectionDelegate;
 

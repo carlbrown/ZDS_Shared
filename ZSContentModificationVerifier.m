@@ -198,6 +198,7 @@ extern void decrementNetworkActivity(id sender);
 
 - (void)connection:(NSURLConnection*)connection didFailWithError:(NSError*)error
 {
+  NSLog(@"WARNING: HEAD call failed to complete: %@",[error localizedDescription]);
   [self finish];
 }
 

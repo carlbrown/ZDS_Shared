@@ -35,6 +35,8 @@
 #import "ZSConstants.h"
 #endif
 
+#import "ZSAssetManager.h"
+
 #import "ZSURLConnectionDelegate.h"
 #import "ZSBackoffHandler.h"
 
@@ -226,6 +228,14 @@ static dispatch_queue_t pngQueue;
   MCRelease(data);
   data = [[NSMutableData alloc] init];
   [self setStartTime:CACurrentMediaTime()];
+  NSNotification *notification = [NSNotification notificationWithName:kImageDownloadBegan object:myURL userInfo:nil];
+  
+  [[NSNotificationQueue defaultQueue] enqueueNotification:notification postingStyle:NSPostWhenIdle coalesceMask:NSNotificationCoalescingOnSender forModes:nil];
+    
+  [[NSNotificationCenter defaultCenter] postNotification:notification];
+  
+//  NSLog(@"Just posted download start of URL '%@'",myURL);
+
 }
 
 - (void)connection:(NSURLConnection*)connection didReceiveData:(NSData*)newData
@@ -237,6 +247,29 @@ static dispatch_queue_t pngQueue;
   }
   if ([self isVerbose]) DLog(@"fired");
   [data appendData:newData];
+  
+  double dataSoFar = (double) [data length];
+  
+  double expected = (double) [[self response] expectedContentLength];
+  
+  float ratioComplete = (dataSoFar/expected);
+  
+  NSDictionary *notificationDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+                                          myURL,
+                                          @"URL",
+                                          [NSNumber numberWithFloat:ratioComplete],
+                                          @"Progress",
+                                          nil];
+  
+  NSNotification *notification = [NSNotification notificationWithName:kImageDownloadProgress object:myURL userInfo:notificationDictionary];
+  
+  [[NSNotificationQueue defaultQueue] enqueueNotification:notification postingStyle:NSPostWhenIdle coalesceMask:NSNotificationCoalescingOnSender forModes:nil];
+  
+  [[NSNotificationCenter defaultCenter] postNotification:notification];
+  
+//  NSLog(@"Just posted download progress for URL '%@'",myURL);
+
+
 }
 
 - (void)connection:(NSURLConnection*)connection didFailWithError:(NSError*)error
