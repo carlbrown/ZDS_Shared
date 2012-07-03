@@ -8,6 +8,10 @@
 
 #import "ZSContentModificationVerifier.h"
 
+#ifndef ISRETINADISPLAY
+#import "ZSConstants.h"
+#endif
+
 extern NSInteger activityCount;
 
 extern void incrementNetworkActivity(id sender);
