@@ -150,6 +150,7 @@ static dispatch_queue_t pngQueue;
   BOOL downloadNeeded = [verifier hasContentChangedForURL:[self myURL] forFilePath:[self filePath]];
   if (!downloadNeeded) {
     //Content is verified to be the same as what we already have
+    MCRelease(verifier);
     return;
   }
   
@@ -167,6 +168,8 @@ static dispatch_queue_t pngQueue;
   
   [verifier saveModificationDetailsForResponse:[self response] forFilePath:[self filePath]];
   
+  MCRelease(verifier);
+
   decrementNetworkActivity(self);
 }
 
