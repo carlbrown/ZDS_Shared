@@ -23,6 +23,7 @@
 		B67897721332B2990022CA67 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B67897711332B2990022CA67 /* Security.framework */; };
 		D308441A159A5C4800BA81AD /* ZSBackoffHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = D3084419159A5C4800BA81AD /* ZSBackoffHandler.m */; };
 		D308441D159A5C6700BA81AD /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D308441C159A5C6700BA81AD /* QuartzCore.framework */; };
+		D3D5FF1515A24CB10047A6A9 /* ZSContentModificationVerifier.m in Sources */ = {isa = PBXBuildFile; fileRef = D3D5FF1415A24CB10047A6A9 /* ZSContentModificationVerifier.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -54,6 +55,8 @@
 		D3084418159A5C4800BA81AD /* ZSBackoffHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZSBackoffHandler.h; path = ../ZSBackoffHandler.h; sourceTree = "<group>"; };
 		D3084419159A5C4800BA81AD /* ZSBackoffHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZSBackoffHandler.m; path = ../ZSBackoffHandler.m; sourceTree = "<group>"; };
 		D308441C159A5C6700BA81AD /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		D3D5FF1315A24CB00047A6A9 /* ZSContentModificationVerifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZSContentModificationVerifier.h; path = ../ZSContentModificationVerifier.h; sourceTree = "<group>"; };
+		D3D5FF1415A24CB10047A6A9 /* ZSContentModificationVerifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZSContentModificationVerifier.m; path = ../ZSContentModificationVerifier.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,6 +146,8 @@
 				B6789754133294950022CA67 /* ZSAssetManager.m */,
 				B6789756133294C20022CA67 /* ZSURLConnectionDelegate.h */,
 				B6789757133294C20022CA67 /* ZSURLConnectionDelegate.m */,
+				D3D5FF1315A24CB00047A6A9 /* ZSContentModificationVerifier.h */,
+				D3D5FF1415A24CB10047A6A9 /* ZSContentModificationVerifier.m */,
 			);
 			name = AssetManager;
 			sourceTree = "<group>";
@@ -217,6 +222,7 @@
 				B67897701332B20C0022CA67 /* NSString+ZSAdditions.m in Sources */,
 				B66417B71342A557001EC65F /* GDataXMLNode.m in Sources */,
 				D308441A159A5C4800BA81AD /* ZSBackoffHandler.m in Sources */,
+				D3D5FF1515A24CB10047A6A9 /* ZSContentModificationVerifier.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
