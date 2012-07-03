@@ -48,11 +48,21 @@ extern void decrementNetworkActivity(id sender);
   NSDictionary *modificationDict = [NSDictionary dictionaryWithContentsOfFile:[self modificationDictionaryFilePath]];
   if (!modificationDict) {
     //Saved file is bogus
+    NSError *error = nil;
+    if (![[NSFileManager defaultManager] removeItemAtPath:[self modificationDictionaryFilePath] error:&error]) {
+      NSLog(@"Error removing file %@: %@",[self modificationDictionaryFilePath],[error localizedDescription]);
+    }
+
     return YES;
   }
   
   if ([modificationDict objectForKey:@"Etag"]==nil && [modificationDict objectForKey:@"Last-Modified"]==nil) {
     //Saved file is bogus
+    NSError *error = nil;
+    if (![[NSFileManager defaultManager] removeItemAtPath:[self modificationDictionaryFilePath] error:&error]) {
+      NSLog(@"Error removing file %@: %@",[self modificationDictionaryFilePath],[error localizedDescription]);
+    }
+    
     return YES;
   }
   
@@ -72,6 +82,8 @@ extern void decrementNetworkActivity(id sender);
   
   if ([self response]==nil || [[self response] allHeaderFields]==nil) {
     //No headers to check
+    //Don't delete the Modification Dict file because the server might be hosed
+    //  and the modification Time/Tag might match once it comes back up
     return YES;
   }
   
@@ -94,6 +106,19 @@ extern void decrementNetworkActivity(id sender);
   }
   
   decrementNetworkActivity(self);
+  
+  if (shouldReDownloadFile) {
+    //Remove Modification Dictionary file
+    NSError *error = nil;
+    if (![[NSFileManager defaultManager] removeItemAtPath:[self modificationDictionaryFilePath] error:&error]) {
+      NSLog(@"Error removing file %@: %@",[self modificationDictionaryFilePath],[error localizedDescription]);
+    }
+  } else {
+    //Update modified date on data file to now
+    NSError *error = nil;
+    NSDictionary *modifiedDict = [NSDictionary dictionaryWithObject:[NSDate date] forKey:NSFileModificationDate];
+    ZAssert([[NSFileManager defaultManager] setAttributes:modifiedDict ofItemAtPath:[self filePath] error:&error], @"Error setting modification date on file %@\n%@\n%@", [self filePath], [error localizedDescription], [error userInfo]);
+  }
 
   return shouldReDownloadFile;
 }
@@ -146,7 +171,9 @@ extern void decrementNetworkActivity(id sender);
 
 - (void)connection:(NSURLConnection*)connection didReceiveResponse:(NSHTTPURLResponse*)resp
 {
-  [self setResponse:resp];
+  if ([resp statusCode]==200) {
+    [self setResponse:resp];
+  }
 }
 
 - (void)connection:(NSURLConnection*)connection didReceiveData:(NSData*)newData
