@@ -26,7 +26,7 @@ extern void decrementNetworkActivity(id sender);
 @synthesize response = _response;
 
 -(NSString *) modificationDictionaryFilePath {
-  return [[self filePath] stringByAppendingPathExtension:@".modified.plist"];
+  return [[self filePath] stringByAppendingPathExtension:@"modified.plist"];
 }
 
 -(BOOL) hasContentChangedForURL: (NSURL *) theURL forFilePath: (NSString *) theFilePath {
@@ -118,6 +118,7 @@ extern void decrementNetworkActivity(id sender);
     NSError *error = nil;
     NSDictionary *modifiedDict = [NSDictionary dictionaryWithObject:[NSDate date] forKey:NSFileModificationDate];
     ZAssert([[NSFileManager defaultManager] setAttributes:modifiedDict ofItemAtPath:[self filePath] error:&error], @"Error setting modification date on file %@\n%@\n%@", [self filePath], [error localizedDescription], [error userInfo]);
+    ZAssert([[NSFileManager defaultManager] setAttributes:modifiedDict ofItemAtPath:[self modificationDictionaryFilePath] error:&error], @"Error setting modification date on file %@\n%@\n%@", [self modificationDictionaryFilePath], [error localizedDescription], [error userInfo]);
   }
 
   return shouldReDownloadFile;
