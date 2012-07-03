@@ -139,6 +139,15 @@ extern void decrementNetworkActivity(id sender);
 
   if (thereSomethingToSave) {
     [modificationDict writeToFile:[self modificationDictionaryFilePath] atomically:YES];
+  } else {
+    //Remove Modification Dictionary file if it exists
+    if ([[NSFileManager defaultManager] fileExistsAtPath:[self modificationDictionaryFilePath]]) {
+      NSError *error = nil;
+      if (![[NSFileManager defaultManager] removeItemAtPath:[self modificationDictionaryFilePath] error:&error]) {
+        NSLog(@"Error removing file %@: %@",[self modificationDictionaryFilePath],[error localizedDescription]);
+      }
+    }
+
   }
 }
 
