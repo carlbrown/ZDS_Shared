@@ -177,6 +177,7 @@ static dispatch_queue_t pngQueue;
 
 - (void)finish
 {
+  [self setDone:YES];
   CFRunLoopStop(CFRunLoopGetCurrent());
 }
 
@@ -191,6 +192,7 @@ static dispatch_queue_t pngQueue;
   
   [self setDuration:(CACurrentMediaTime() - [self startTime])];
    
+  [self setDone:YES];
   if (![self filePath]) {
     if ([[self delegate] respondsToSelector:[self successSelector]]) {
       [[self delegate] performSelectorOnMainThread:[self successSelector] withObject:self waitUntilDone:YES];
@@ -280,6 +282,8 @@ static dispatch_queue_t pngQueue;
     return;
   }
   DLog(@"Failure %@\nURL: %@", [error localizedDescription], [self myURL]);
+  [self setDone:YES];
+
   if ([[self delegate] respondsToSelector:[self failureSelector]]) {
     [[self delegate] performSelectorOnMainThread:[self failureSelector] withObject:self waitUntilDone:YES];
   }

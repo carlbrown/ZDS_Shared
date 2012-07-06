@@ -453,6 +453,8 @@ typedef enum {
   }
 }
 
+
+
 #pragma mark -
 #pragma mark Public Methods
 
@@ -464,7 +466,7 @@ typedef enum {
   }
   
   for (ZSURLConnectionDelegate *delegate in [[self assetQueue] operations]) {
-    if ([[delegate myURL] isEqual:url]) return;
+    if ([[delegate myURL] isEqual:url] && ![delegate isDone]) return;
   }
   
   NSString *filePath = [[self resolveLocalURLForRemoteURL:url] path];
